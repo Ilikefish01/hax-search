@@ -1,45 +1,43 @@
 /**
- * Copyright 2024 Krittanat Kulsakdinun
+ * Copyright 2024 
  * @license Apache-2.0, see LICENSE for full text.
  */
 import { LitElement, html, css } from "lit";
 import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
-
 /**
  * `hax-search`
  * 
  * @demo index.html
- * @element hax-search
+ * @element project-1
  */
-export class haxSearch extends DDDSuper(I18NMixin(LitElement)) {
-
+export class project1 extends DDDSuper(I18NMixin(LitElement)) {
   static get tag() {
-    return "hax-search";
+    return "project-1";
   }
-
   constructor() {
     super();
     this.title = "";
-    this.description = "";
-    this.lastUpdated = "";
-    this.contentLink = "";
-    this.sourceLink = "";
-    this.image = "";
+    this.t = this.t || {};
+    this.t = {
+      ...this.t,
+      title: "Title",
+    };
+    this.registerLocalization({
+      context: this,
+      localesPath:
+        new URL("./locales/project-1.ar.json", import.meta.url).href +
+        "/../",
+      locales: ["ar", "es", "hi", "zh"],
+    });
   }
-
   // Lit reactive properties
   static get properties() {
     return {
+      ...super.properties,
       title: { type: String },
-      description: { type: String },
-      lastUpdated: { type: String },
-      contentLink: { type: String },
-      sourceLink: { type: String },
-      image: { type: String },
     };
   }
-
   // Lit scoped styles
   static get styles() {
     return [super.styles,
@@ -55,20 +53,24 @@ export class haxSearch extends DDDSuper(I18NMixin(LitElement)) {
         padding: var(--ddd-spacing-4);
       }
       h3 span {
-        font-size: var(--hax-search-label-font-size, var(--ddd-font-size-s));
+        font-size: var(--project-1-label-font-size, var(--ddd-font-size-s));
       }
     `];
   }
-
   // Lit render the HTML
   render() {
     return html`
-    <details open>
-      <summary>Search input</summary>
-      <label for="input"> Search articles in HAX:</label>
-      <input type = "text" id = "input" name = "name" @input="${this.inputChanged}"/>
-    </details>
-  `;
+<div class="wrapper">
+  <h3><span>${this.t.title}:</span> ${this.title}</h3>
+  <slot></slot>
+</div>`;
+  }
+  /**
+   * haxProperties integration via file reference
+   */
+  static get haxProperties() {
+    return new URL(`./lib/${this.tag}.haxProperties.json`, import.meta.url)
+      .href;
+  }
 }
-
-globalThis.customElements.define(haxSearch.tag, haxSearch);
+globalThis.customElements.define(project1.tag, project1);
