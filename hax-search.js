@@ -21,25 +21,22 @@ export class haxSearch extends DDDSuper(I18NMixin(LitElement)) {
   constructor() {
     super();
     this.title = "";
-    this.t = this.t || {};
-    this.t = {
-      ...this.t,
-      title: "Title",
-    };
-    this.registerLocalization({
-      context: this,
-      localesPath:
-        new URL("./locales/hax-search.ar.json", import.meta.url).href +
-        "/../",
-      locales: ["ar", "es", "hi", "zh"],
-    });
+    this.description = "";
+    this.lastUpdated = "";
+    this.contentLink = "";
+    this.sourceLink = "";
+    this.image = "";
   }
 
   // Lit reactive properties
   static get properties() {
     return {
-      ...super.properties,
       title: { type: String },
+      description: { type: String },
+      lastUpdated: { type: String },
+      contentLink: { type: String },
+      sourceLink: { type: String },
+      image: { type: String },
     };
   }
 
@@ -66,19 +63,12 @@ export class haxSearch extends DDDSuper(I18NMixin(LitElement)) {
   // Lit render the HTML
   render() {
     return html`
-<div class="wrapper">
-  <h3><span>${this.t.title}:</span> ${this.title}</h3>
-  <slot></slot>
-</div>`;
-  }
-
-  /**
-   * haxProperties integration via file reference
-   */
-  static get haxProperties() {
-    return new URL(`./lib/${this.tag}.haxProperties.json`, import.meta.url)
-      .href;
-  }
+    <details open>
+      <summary>Search input</summary>
+      <label for="input"> Search articles in HAX:</label>
+      <input type = "text" id = "input" name = "name" @input="${this.inputChanged}"/>
+    </details>
+  `;
 }
 
 globalThis.customElements.define(haxSearch.tag, haxSearch);
