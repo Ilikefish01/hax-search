@@ -1,8 +1,7 @@
 import { LitElement, html, css } from "lit";
-import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
 
-export class HaxImage extends DDDSuper(I18NMixin(LitElement)) {
+export class HaxImage extends I18NMixin(LitElement) {
   static get properties() {
     return {
       title: { type: String },
@@ -25,58 +24,66 @@ export class HaxImage extends DDDSuper(I18NMixin(LitElement)) {
     return css`
       :host {
         display: block;
-        font-family: var(--ddd-font-primary, sans-serif);
+        font-family: var(--font-family, Arial, sans-serif);
+        color: var(--primary-color, #333);
       }
       .container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 20px;
+        gap: 15px;
         padding: 20px;
-        border: 2px solid black;
-        background-color: var(--site-hex-code, lightgray);
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: var(--background-color, #d0e8ff);
       }
       .title {
-        font-size: 18px;
+        font-size: 20px;
         font-weight: bold;
         text-align: center;
+        color: var(--title-color, #000);
       }
-      .container img {
+      img {
         height: 150px;
-      }
-      .info-row {
-        display: flex;
-        flex-direction: column;
+        border-radius: 4px;
       }
       .label {
         font-weight: bold;
+        color: #555;
+      }
+      a {
+        color: var(--link-color, #1a73e8);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
       }
     `;
   }
 
   render() {
     return html`
-      <div class="container" style="--site-hex-code: ${this.hexCode};">
-        <div class="title" ?hidden="${!this.title}">
-          <a href="${this.url || this.pageLink}" target="_blank">
-            ${this.icon ? html`<simple-icon icon="${this.icon}"></simple-icon>` : ''}
-            ${this.title}
-          </a>
-        </div>
-        
-        ${this.logo || this.imageSrc ? html`
-          <img src="${this.logo || this.imageSrc}" alt="${this.title}">
-        ` : ''}
-
-        <div class="info-row">
+      <div class="container">
+        ${this.title
+          ? html`
+              <a href="${this.url || this.pageLink}" class="title" target="_blank">
+                ${this.icon ? html`<simple-icon icon="${this.icon}"></simple-icon>` : ''}
+                ${this.title}
+              </a>
+            `
+          : ''}
+        ${this.logo || this.imageSrc
+          ? html`<img src="${this.logo || this.imageSrc}" alt="${this.title || 'Image'}" />`
+          : ''}
+        <div>
           ${this.description ? html`<p><span class="label">Description:</span> ${this.description}</p>` : ''}
           ${this.dateCreated ? html`<p><span class="label">Date Created:</span> ${this.dateCreated}</p>` : ''}
           ${this.dateUpdated ? html`<p><span class="label">Last Updated:</span> ${this.dateUpdated}</p>` : ''}
           ${this.readTime ? html`<p><span class="label">Read Time:</span> ${this.readTime} minutes</p>` : ''}
           ${this.theme ? html`<p><span class="label">Theme:</span> ${this.theme}</p>` : ''}
-          ${this.pageHtml ? html`
-            <a href="${this.pageHtml}" target="_blank"><strong>View page source</strong></a>
-          ` : ''}
+          ${this.pageHtml
+            ? html`<a href="${this.pageHtml}" target="_blank"><strong>View page source</strong></a>`
+            : ''}
         </div>
       </div>
     `;

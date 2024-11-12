@@ -1,9 +1,8 @@
 import { LitElement, html, css } from "lit";
-import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
 import "./hax-image.js";
 
-export class HaxSearch extends DDDSuper(I18NMixin(LitElement)) {
+export class HaxSearch extends I18NMixin(LitElement) {
   static get properties() {
     return {
       title: { type: String },
@@ -27,13 +26,43 @@ export class HaxSearch extends DDDSuper(I18NMixin(LitElement)) {
     return css`
       :host {
         display: block;
-        font-family: var(--ddd-font-navigation, sans-serif);
-        color: var(--ddd-theme-primary, black);
-        background-color: var(--ddd-theme-accent, white);
+        font-family: var(--font-family, Arial, sans-serif);
+        color: var(--primary-color, #333);
+        background-color: var(--background-color, #d0e8ff);
+        padding: 20px;
+        border-radius: 8px;
+      }
+      h2 {
+        font-size: 24px;
+        color: var(--title-color, #000);
       }
       .container {
-        margin: 10px;
-        padding: 20px;
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      input, button {
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 4px;
+      }
+      input {
+        border: 1px solid #ddd;
+        flex: 1;
+      }
+      button {
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .results {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
       }
     `;
   }
@@ -42,55 +71,51 @@ export class HaxSearch extends DDDSuper(I18NMixin(LitElement)) {
     return html`
       <h2>${this.title}</h2>
       <div class="container">
-        <input placeholder="Search" @input=${this.handleInput}/>
+        <input placeholder="Search" @input=${e => (this.url = e.target.value)} />
         <button @click="${this.fetchData}">Analyze</button>
       </div>
-
       ${this.loading ? html`<p>Loading results...</p>` : ''}
-
-      ${this.data ? html`
-        <hax-image 
-          .title=${this.data.title}
-          .description=${this.data.description}
-          .logo=${`${this.url}${this.data.metadata.site.logo}`}
-          .dateCreated=${this.formatDate(this.data.metadata.site.created)}
-          .dateUpdated=${this.formatDate(this.data.metadata.site.updated)}
-          .hexCode=${this.data.metadata.theme.variables.hexCode}
-          .theme=${this.data.metadata.theme.name}
-          .icon=${this.data.metadata.theme.variables.icon}
-          .url=${this.url}
-        ></hax-image>
-      ` : html`<p>The site '${this.url}' is not compatible</p>`}
-
+      ${this.data
+        ? html`
+            <hax-image
+              .title=${this.data.title}
+              .description=${this.data.description}
+              .logo=${`${this.url}${this.data.metadata?.site?.logo || ''}`}
+              .dateCreated=${this.formatDate(this.data.metadata?.site?.created)}
+              .dateUpdated=${this.formatDate(this.data.metadata?.site?.updated)}
+              .hexCode=${this.data.metadata?.theme?.variables?.hexCode}
+              .theme=${this.data.metadata?.theme?.name}
+              .icon=${this.data.metadata?.theme?.variables?.icon}
+              .url=${this.url}
+            ></hax-image>
+          `
+        : html`<p>The site '${this.url}' is not compatible</p>`}
       <div class="results">
-        ${this.searchResults.map(item => html`
-          <hax-image 
-            .title=${item.title}
-            .description=${item.description}
-            .imageSrc=${this.getImageSource(item)}
-            .dateUpdated=${this.formatDate(item.metadata.updated)}
-            .pageLink=${`${this.url}${item.slug}`}
-            .pageHtml=${`${this.url}${item.location}`}
-            .readTime=${item.metadata.readtime}
-          ></hax-image>
-        `)}
+        ${this.searchResults.map(
+          item => html`
+            <hax-image
+              .title=${item.title}
+              .description=${item.description}
+              .imageSrc=${item.metadata?.image || ''}
+              .dateUpdated=${this.formatDate(item.metadata?.updated)}
+              .pageLink=${`${this.url}${item.slug}`}
+              .pageHtml=${`${this.url}${item.location}`}
+              .readTime=${item.metadata?.readtime}
+            ></hax-image>
+          `
+        )}
       </div>
     `;
-  }
-
-  handleInput(event) {
-    this.url = event.target.value;
   }
 
   fetchData() {
     this.loading = true;
     fetch(`${this.url}/site.json`)
-      .then(response => response.ok ? response.json() : Promise.reject('Error loading data'))
+      .then(response => (response.ok ? response.json() : Promise.reject('Error loading data')))
       .then(data => {
         this.data = data;
         this.searchResults = data.items || [];
         this.loading = false;
-        console.log(data)
       })
       .catch(() => {
         this.data = null;
@@ -100,11 +125,7 @@ export class HaxSearch extends DDDSuper(I18NMixin(LitElement)) {
   }
 
   formatDate(date) {
-    return new Date(date).toLocaleDateString();
-  }
-
-  getImageSource(item) {
-    return item.metadata?.image || '';
+    return date ? new Date(date).toLocaleDateString() : '';
   }
 
   static get tag() {
