@@ -90,6 +90,7 @@ export class HaxSearch extends DDDSuper(I18NMixin(LitElement)) {
         this.data = data;
         this.searchResults = data.items || [];
         this.loading = false;
+        console.log(data)
       })
       .catch(() => {
         this.data = null;
