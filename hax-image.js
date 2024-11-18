@@ -24,42 +24,45 @@ export class HaxImage extends I18NMixin(LitElement) {
     return css`
       :host {
         display: block;
-        font-family: var(--font-family, Arial, sans-serif);
-        color: var(--primary-color, #333);
+        font-family: var(--font-family-default, Arial, sans-serif);
+        color: var(--text-primary-color, #2c3e50); /* Dark slate gray */
       }
       .container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: var(--background-color, #d0e8ff);
+        gap: var(--spacing-medium, 15px);
+        padding: var(--spacing-large, 20px);
+        border: var(--border-width, 1px) solid var(--border-color, #bdc3c7); /* Light gray border */
+        border-radius: var(--border-radius-medium, 8px);
+        background-color: var(--background-primary-color, #f4f8fb); /* Soft blue-gray */
       }
       .title {
-        font-size: 20px;
-        font-weight: bold;
+        font-size: var(--font-size-medium, 20px);
+        font-weight: var(--font-weight-bold, bold);
         text-align: center;
-        color: var(--title-color, #000);
+        color: var(--text-title-color, #34495e); /* Dark blue-gray */
       }
       img {
-        height: 150px;
-        border-radius: 4px;
+        height: var(--image-height-medium, 150px);
+        border-radius: var(--border-radius-small, 4px);
       }
       .label {
-        font-weight: bold;
-        color: #555;
+        font-weight: var(--font-weight-bold, bold);
+        color: var(--text-secondary-color, #7f8c8d); /* Medium gray */
       }
       a {
-        color: var(--link-color, #1a73e8);
+        color: var(--link-color-primary, #3498db); /* Brighter blue */
         text-decoration: none;
       }
       a:hover {
         text-decoration: underline;
+        color: var(--link-hover-color, #1f78c0); /* Darker hover blue */
       }
     `;
   }
+  
+  
 
   render() {
     return html`

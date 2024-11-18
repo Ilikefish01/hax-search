@@ -1,4 +1,5 @@
 import { LitElement, html, css } from "lit";
+import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
 import "./hax-image.js";
 
@@ -9,71 +10,86 @@ export class HaxSearch extends I18NMixin(LitElement) {
       url: { type: String },
       loading: { type: Boolean },
       searchResults: { type: Array },
-      data: { type: Object }
+      data: { type: Object },
+      errorMessage: { type: String },
     };
   }
 
   constructor() {
     super();
     this.title = 'Search HAX Articles';
-    this.url = 'https://haxthweb.org/sites.json';
+    this.url = '';
     this.loading = false;
     this.searchResults = [];
     this.data = null;
+    this.errorMessage = '';
   }
 
   static get styles() {
     return css`
       :host {
         display: block;
-        font-family: var(--font-family, Arial, sans-serif);
-        color: var(--primary-color, #333);
-        background-color: var(--background-color, #d0e8ff);
-        padding: 20px;
-        border-radius: 8px;
+        font-family: var(--font-family-default, Arial, sans-serif);
+        color: var(--text-primary-color, #2c3e50); /* Dark slate gray */
+        background-color: var(--background-primary-color, #f5f7fa); /* Light gray */
+        padding: var(--spacing-medium, 20px);
+        border-radius: var(--border-radius-medium, 8px);
       }
       h2 {
-        font-size: 24px;
-        color: var(--title-color, #000);
+        font-size: var(--font-size-large, 24px);
+        color: var(--text-title-color, #34495e); /* Dark blue-gray */
       }
       .container {
         display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
+        gap: var(--spacing-small, 10px);
+        margin-bottom: var(--spacing-medium, 15px);
       }
-      input, button {
-        padding: 8px;
-        font-size: 16px;
-        border-radius: 4px;
+      input,
+      button {
+        padding: var(--spacing-small, 8px);
+        font-size: var(--font-size-medium, 16px);
+        border-radius: var(--border-radius-small, 4px);
       }
       input {
-        border: 1px solid #ddd;
+        border: var(--border-width, 1px) solid var(--border-color, #bdc3c7); /* Light gray border */
         flex: 1;
       }
       button {
-        color: #fff;
-        background-color: #007bff;
+        color: var(--button-text-color, #ecf0f1); /* Soft white */
+        background-color: var(--button-primary-background-color, #2980b9); /* Azure blue */
         border: none;
         cursor: pointer;
       }
       button:hover {
-        background-color: #0056b3;
+        background-color: var(--button-hover-background-color, #1a6393); /* Deep azure blue */
       }
       .results {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 15px;
+        grid-template-columns: repeat(auto-fill, minmax(var(--grid-min-column-width, 250px), 1fr));
+        gap: var(--spacing-medium, 15px);
+      }
+      .error-message {
+        color: var(--error-color, #e74c3c); /* Bright red */
+        font-size: var(--font-size-small, 14px);
+        margin-top: var(--spacing-small, 10px);
       }
     `;
   }
+  
 
   render() {
     return html`
       <h2>${this.title}</h2>
       <div class="container">
-        <input placeholder="Search" @input=${e => (this.url = e.target.value)} />
+        <input
+          placeholder="Enter site location"
+          @input=${e => (this.url = e.target.value.trim())}
+        />
         <button @click="${this.fetchData}">Analyze</button>
       </div>
+      ${this.errorMessage
+        ? html`<p class="error-message">${this.errorMessage}</p>`
+        : ''}
       ${this.loading ? html`<p>Loading results...</p>` : ''}
       ${this.data
         ? html`
@@ -108,18 +124,48 @@ export class HaxSearch extends I18NMixin(LitElement) {
     `;
   }
 
+  validateInput(url) {
+    if (!url) {
+      this.errorMessage = 'URL is required. Please enter a valid site location.';
+      return false;
+    }
+
+    try {
+      const parsedUrl = new URL(url);
+      if (!parsedUrl.protocol.startsWith('http')) {
+        this.errorMessage = 'Invalid URL. Please enter a valid site location.';
+        return false;
+      }
+    } catch (e) {
+      this.errorMessage = 'Invalid URL format. Please enter a valid site location.';
+      return false;
+    }
+
+    this.errorMessage = '';
+    return true;
+  }
+
   fetchData() {
+    if (!this.validateInput(this.url)) {
+      return; // Stop execution if validation fails
+    }
+
     this.loading = true;
     fetch(`${this.url}/site.json`)
       .then(response => (response.ok ? response.json() : Promise.reject('Error loading data')))
       .then(data => {
+        if (!data.items || !data.title) {
+          throw new Error('Invalid site.json schema');
+        }
+
         this.data = data;
         this.searchResults = data.items || [];
         this.loading = false;
       })
-      .catch(() => {
+      .catch(error => {
         this.data = null;
         this.searchResults = [];
+        this.errorMessage = error.message || 'Failed to fetch site data';
         this.loading = false;
       });
   }
