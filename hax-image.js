@@ -12,7 +12,6 @@ export class HaxImage extends I18NMixin(LitElement) {
       dateUpdated: { type: String },
       pageLink: { type: String },
       pageHtml: { type: String },
-      readTime: { type: String },
       hexCode: { type: String },
       theme: { type: String },
       icon: { type: String },
@@ -82,7 +81,6 @@ export class HaxImage extends I18NMixin(LitElement) {
           ${this.description ? html`<p><span class="label">Description:</span> ${this.description}</p>` : ''}
           ${this.dateCreated ? html`<p><span class="label">Date Created:</span> ${this.dateCreated}</p>` : ''}
           ${this.dateUpdated ? html`<p><span class="label">Last Updated:</span> ${this.dateUpdated}</p>` : ''}
-          ${this.readTime ? html`<p><span class="label">Read Time:</span> ${this.readTime} minutes</p>` : ''}
           ${this.theme ? html`<p><span class="label">Theme:</span> ${this.theme}</p>` : ''}
           ${this.pageHtml
             ? html`<a href="${this.pageHtml}" target="_blank"><strong>View page source</strong></a>`

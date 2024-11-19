@@ -30,14 +30,14 @@ export class HaxSearch extends I18NMixin(LitElement) {
       :host {
         display: block;
         font-family: var(--font-family-default, Arial, sans-serif);
-        color: var(--text-primary-color, #2c3e50); /* Dark slate gray */
-        background-color: var(--background-primary-color, #f5f7fa); /* Light gray */
+        color: var(--text-primary-color, #2c3e50);
+        background-color: var(--background-primary-color, #f5f7fa);
         padding: var(--spacing-medium, 20px);
         border-radius: var(--border-radius-medium, 8px);
       }
       h2 {
         font-size: var(--font-size-large, 24px);
-        color: var(--text-title-color, #34495e); /* Dark blue-gray */
+        color: var(--text-title-color, #34495e); 
       }
       .container {
         display: flex;
@@ -51,17 +51,17 @@ export class HaxSearch extends I18NMixin(LitElement) {
         border-radius: var(--border-radius-small, 4px);
       }
       input {
-        border: var(--border-width, 1px) solid var(--border-color, #bdc3c7); /* Light gray border */
+        border: var(--border-width, 1px) solid var(--border-color, #bdc3c7); 
         flex: 1;
       }
       button {
         color: var(--button-text-color, #ecf0f1); /* Soft white */
-        background-color: var(--button-primary-background-color, #2980b9); /* Azure blue */
+        background-color: var(--button-primary-background-color, #2980b9);
         border: none;
         cursor: pointer;
       }
       button:hover {
-        background-color: var(--button-hover-background-color, #1a6393); /* Deep azure blue */
+        background-color: var(--button-hover-background-color, #1a6393);
       }
       .results {
         display: grid;
@@ -69,13 +69,13 @@ export class HaxSearch extends I18NMixin(LitElement) {
         gap: var(--spacing-medium, 15px);
       }
       .error-message {
-        color: var(--error-color, #e74c3c); /* Bright red */
+        color: var(--error-color, #e74c3c); 
         font-size: var(--font-size-small, 14px);
         margin-top: var(--spacing-small, 10px);
       }
     `;
   }
-  
+
 
   render() {
     return html`
@@ -116,7 +116,6 @@ export class HaxSearch extends I18NMixin(LitElement) {
               .dateUpdated=${this.formatDate(item.metadata?.updated)}
               .pageLink=${`${this.url}${item.slug}`}
               .pageHtml=${`${this.url}${item.location}`}
-              .readTime=${item.metadata?.readtime}
             ></hax-image>
           `
         )}
